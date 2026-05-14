@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  bidkan-bucket:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: bidkan-bucket
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    environment:
+      - SERVER_PORT=3000
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadminpassword
+      - MINIO_BUCKET_NAME=bidkan-bucket
+      - MINIO_USE_SSL=false
+    depends_on:
+      - minio
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadminpassword
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+
+  mc:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c " echo 'Waiting for MinIO to start...'; sleep 5; /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadminpassword; /usr/bin/mc mb myminio/bidkan-bucket --ignore-existing; /usr/bin/mc anonymous set public myminio/bidkan-bucket; echo 'MinIO bucket setup completed.'; "
+
+volumes:
+  minio_data:
