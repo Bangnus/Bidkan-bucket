@@ -7,7 +7,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Config holds all the configuration variables
 type Config struct {
 	ServerPort      string
 	MinioEndpoint   string
@@ -17,7 +16,6 @@ type Config struct {
 	MinioBucketName string
 }
 
-// LoadConfig reads configuration from .env file or environment variables
 func LoadConfig() *Config {
 	err := godotenv.Load()
 	if err != nil {

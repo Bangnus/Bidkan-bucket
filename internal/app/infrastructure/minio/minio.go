@@ -4,15 +4,15 @@ import (
 	"context"
 	"log"
 
-	"bidkan-bucket/internal/pkg/config"
+	"bidkan-bucket/internal/config"
 
-	"github.com/minio/minio-go/v7"
+	minioClient "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 // SetupMinioClient initializes and returns a MinIO client
-func SetupMinioClient(cfg *config.Config) *minio.Client {
-	minioClient, err := minio.New(cfg.MinioEndpoint, &minio.Options{
+func SetupMinioClient(cfg *config.Config) *minioClient.Client {
+	client, err := minioClient.New(cfg.MinioEndpoint, &minioClient.Options{
 		Creds:  credentials.NewStaticV4(cfg.MinioAccessKey, cfg.MinioSecretKey, ""),
 		Secure: cfg.MinioUseSSL,
 	})
@@ -21,11 +21,11 @@ func SetupMinioClient(cfg *config.Config) *minio.Client {
 	}
 
 	// Verify connection
-	_, err = minioClient.ListBuckets(context.Background())
+	_, err = client.ListBuckets(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to connect to MinIO server: %v", err)
 	}
 
 	log.Println("✅ Successfully connected to MinIO")
-	return minioClient
+	return client
 }

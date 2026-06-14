@@ -7,8 +7,10 @@ import (
 	"bidkan-bucket/internal/app/domain/entity"
 )
 
-// BucketUsecase defines the business logic for file operations
-type BucketUsecase interface {
+type UploadBucketService interface {
 	UploadFile(ctx context.Context, file *multipart.FileHeader) (*entity.FileResponse, error)
+}
+
+type DeleteBucketService interface {
 	DeleteFile(ctx context.Context, filename string) error
 }
