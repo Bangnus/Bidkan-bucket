@@ -3,7 +3,7 @@ FROM golang:1.25-alpine
 WORKDIR /app
 
 # Install air for hot-reloading
-RUN go install github.com/air-verse/air@latest
+RUN go install github.com/air-verse/air@v1.61.7
 
 # Download dependencies
 COPY go.mod go.sum ./
